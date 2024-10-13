@@ -1,22 +1,30 @@
-const dotenv = require('dotenv');
 const express = require('express');
+const cors = require('cors');
+
 const dbConnection = require('./src/Db/connection');
-dotenv.config()
+const { Config } = require('./src/Constant/Config');
 
 const app = express();
-const PORT = process.env.SERVER_PORT || 5000;
+const PORT = Config.SERVER_PORT
+
+const Category = require('./src/Routes/Category');
+const Expense = require('./src/Routes/Expense');
+
+
 dbConnection()
 
-app.use(cors({
-    origin: [process.env.PROD_FRONTEND_URL, process.env.TEST_FRONTEND_URL],
-    credentials: true
-}));
+// app.use(cors({
+//     origin: [Config.FRONTEND_URL],
+//     credentials: true
+// }));
+app.use(cors());
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
-// express middleware handling the body parsing 
-app.use(express.json());
+app.use('/api/category', Category)
+app.use('/api/expense', Expense)
 
-// express middleware handling the form parsing
-app.use(express.urlencoded({ extended: false }));
+
 
 app.listen(PORT, () => {
     console.log(`Application Started on ${PORT}`)

@@ -1,4 +1,6 @@
-const expenseSchema = new Schema({
+const mongoose = require('mongoose');
+
+const expenseSchema = new mongoose.Schema({
     clerkUserId: {
         type: String,
         required: true
@@ -7,25 +9,22 @@ const expenseSchema = new Schema({
         type: Number,
         required: true
     },
-    category: {
+    categoryId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
         required: true
     },
-    subcategory: {
+    subCategoryId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Subcategory',
-        required: true
-    },
-    date: {
-        type: Date,
+        ref: 'Category.subcategories',
         required: true
     },
     expenseName: {
         type: String,
         required: true
-
     }
 }, { timestamps: true });
+
+// No need to check for Expense here, as it's likely not causing the overwrite issue
 
 module.exports = mongoose.model('Expense', expenseSchema);
