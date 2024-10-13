@@ -25,6 +25,5 @@ const expenseSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-// No need to check for Expense here, as it's likely not causing the overwrite issue
 
 module.exports = mongoose.model('Expense', expenseSchema);
