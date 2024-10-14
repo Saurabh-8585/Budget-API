@@ -70,23 +70,24 @@ const getCurrentMonthExpense = async (req, res) => {
             createdAt: { $gte: start, $lt: end }
         }).populate('categoryId', 'category');
 
-        const formatData = expenses.map(d => ({
-            category: d.categoryId.category,
-            amount: d.amount,
+        const totalAmount = expenses.reduce((sum, expense) => sum + expense.amount, 0);
 
-        }))
         const categoryWiseData = expenses.reduce((acc, curr) => {
             const category = curr.categoryId.category;
             if (!acc[category]) {
                 acc[category] = {
                     category: category,
                     totalAmount: 0,
+                    percentage: 0,
                 };
             }
             acc[category].totalAmount += curr.amount;
             return acc;
         }, {});
-        const formattedData = Object.values(categoryWiseData);
+        const formattedData = Object.values(categoryWiseData).map(item => {
+            item.percentage = ((item.totalAmount / totalAmount) * 100).toFixed(2); // Calculate percentage
+            return item;
+        });
 
         res.status(200).json(formattedData);
     } catch (error) {
