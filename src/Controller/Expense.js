@@ -142,8 +142,11 @@ const generateRandomExpenses = async (clerkUserId) => {
 
             transactions.push(newExpense.save());
         }
+        return await Promise.all(transactions);
+
     } catch (error) {
         console.log(error)
+        return [];
     }
 };
 
@@ -154,8 +157,8 @@ const generateExpensesIfNone = async (req, res) => {
         const existingExpenses = await Expense.find({ clerkUserId });
 
         if (existingExpenses.length === 0) {
-            await generateRandomExpenses(clerkUserId);
-            return res.status(201).json({ mockDataGenerated: true });
+            const data = await generateRandomExpenses(clerkUserId);
+            return res.status(201).json({ mockDataGenerated: data?.length > 0 ? true : false });
         } else {
             return res.status(200).json({ mockDataGenerated: false });
         }
